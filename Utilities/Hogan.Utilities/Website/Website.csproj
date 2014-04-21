@@ -281,9 +281,9 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hcs.Data.Entities\Hcs.Domain.Entities.csproj">
+    <ProjectReference Include="..\Hcs.Data.Entities\Hcs.Data.Entities.csproj">
       <Project>{ba288e23-4614-4691-92db-4b27d0183d6c}</Project>
-      <Name>Hcs.Domain.Entities</Name>
+      <Name>Hcs.Data.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hcs.Data.Repository\Hcs.Data.Repository.csproj">
       <Project>{0f729a49-9b19-434f-a0ea-d1613d4b432e}</Project>

@@ -58,9 +58,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hcs.Data.Entities\Hcs.Domain.Entities.csproj">
+    <ProjectReference Include="..\Hcs.Data.Entities\Hcs.Data.Entities.csproj">
       <Project>{BA288E23-4614-4691-92DB-4B27D0183D6C}</Project>
-      <Name>Hcs.Domain.Entities</Name>
+      <Name>Hcs.Data.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
