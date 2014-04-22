@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Web.Http;
+using System.Web.Http.Dependencies;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.SessionState;
@@ -11,8 +14,10 @@ using Microsoft.AspNet.SignalR.Infrastructure;
 using NHibernate;
 using Ninject.Activation;
 using Ninject.Modules;
+using Ninject.Syntax;
 using Ninject.Web.Mvc;
 using Website.Hubs;
+using IDependencyResolver = System.Web.Http.Dependencies.IDependencyResolver;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(Website.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(Website.App_Start.NinjectWebCommon), "Stop")]
@@ -47,28 +52,28 @@ namespace Website.App_Start
         }
     }
 
-    public static class NinjectWebCommon 
+    public static class NinjectWebCommon
     {
-        private static readonly Bootstrapper bootstrapper = new Bootstrapper();
+        private static readonly Bootstrapper Bootstrapper = new Bootstrapper();
 
         /// <summary>
         /// Starts the application
         /// </summary>
-        public static void Start() 
+        public static void Start()
         {
-            DynamicModuleUtility.RegisterModule(typeof(OnePerRequestHttpModule));
-            DynamicModuleUtility.RegisterModule(typeof(NinjectHttpModule));
-            bootstrapper.Initialize(CreateKernel);
+            DynamicModuleUtility.RegisterModule(typeof (OnePerRequestHttpModule));
+            DynamicModuleUtility.RegisterModule(typeof (NinjectHttpModule));
+            Bootstrapper.Initialize(CreateKernel);
         }
-        
+
         /// <summary>
         /// Stops the application.
         /// </summary>
         public static void Stop()
         {
-            bootstrapper.ShutDown();
+            Bootstrapper.ShutDown();
         }
-        
+
         /// <summary>
         /// Creates the kernel that will manage your application.
         /// </summary>
@@ -83,12 +88,12 @@ namespace Website.App_Start
 
                 GlobalHost.DependencyResolver = new SignalRNinjectDependencyResolver(kernel);
 
-                
+
 
                 // WebApi Ninject Resolver
-                //GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
+                GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
 
-                
+
 
                 RegisterServices(kernel);
                 return kernel;
@@ -108,12 +113,13 @@ namespace Website.App_Start
         {
             kernel.Bind<IHttpModule>().To<NHibernateSessionPerRequest>();
             kernel.Bind<IHubConnectionContext>().ToMethod(context =>
-                    GlobalHost.DependencyResolver.Resolve<IConnectionManager>().
-                        GetHubContext<PeopleHub>().Clients
+                GlobalHost.DependencyResolver.Resolve<IConnectionManager>().
+                    GetHubContext<PeopleHub>().Clients
                 ).WhenInjectedInto<PeopleHub>();
+            
 
             kernel.Load(new HoganNinjectModule());
-        }        
+        }
     }
 
     public class HoganNinjectModule : NinjectModule
@@ -125,5 +131,60 @@ namespace Website.App_Start
         }
     }
 
-   
+
+
+    public class NinjectDependencyScope : IDependencyScope
+    {
+        private IResolutionRoot _resolver;
+
+        internal NinjectDependencyScope(IResolutionRoot resolver)
+        {
+            Contract.Assert(resolver != null);
+
+            _resolver = resolver;
+        }
+
+        public void Dispose()
+        {
+            var disposable = _resolver as IDisposable;
+            if (disposable != null)
+                disposable.Dispose();
+
+            _resolver = null;
+        }
+
+        public object GetService(Type serviceType)
+        {
+            if (_resolver == null)
+                throw new ObjectDisposedException("this", "This scope has already been disposed");
+
+            return _resolver.TryGet(serviceType);
+        }
+
+        public IEnumerable<object> GetServices(Type serviceType)
+        {
+            if (_resolver == null)
+                throw new ObjectDisposedException("this", "This scope has already been disposed");
+
+            return _resolver.GetAll(serviceType);
+        }
+    }
+
+    public class NinjectDependencyResolver : NinjectDependencyScope, IDependencyResolver
+    {
+        private readonly IKernel _kernel;
+
+        public NinjectDependencyResolver(IKernel kernel)
+            : base(kernel)
+        {
+            _kernel = kernel;
+        }
+
+        public IDependencyScope BeginScope()
+        {
+            return new NinjectDependencyScope(_kernel.BeginBlock());
+        }
+    }
+
+
 }
