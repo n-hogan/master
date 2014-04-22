@@ -50,6 +50,7 @@ namespace Website.App_Start
         {
             return _kernel.GetAll(serviceType).Concat(base.GetServices(serviceType));
         }
+
     }
 
     public static class NinjectWebCommon

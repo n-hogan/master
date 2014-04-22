@@ -30,19 +30,24 @@
                 });
             });
 
+            var viewModel =
+            {
+                people: ko.observableArray()
+            };
+            
 
             var people = $.connection.peopleHub;
             $.connection.hub.start().done(function () {
-                people.server.getAll().done(function (data) {            
+                people.server.getAll().done(function (data) {
                     debugger;
-                    //$('#returnedData').html(data[0].name);
-
-                    //ko.applyBindings(data);
+                    alert(data);
+                    viewModel.people = ko.mapping.fromJS(data);
+                    ko.applyBindings(viewModel);
                 });
 
             });
 
-       
+            
 
         });
 
@@ -53,11 +58,10 @@
 
 
 
-    <tbody data-bind="foreach: seats">
+    <tbody data-bind="foreach: people">
         <tr>
-            <td><input data-bind="value: name" /></td>
-            
-            
+            <td data-bind="text: name"></td>
+ 
         </tr>
     </tbody>
 
