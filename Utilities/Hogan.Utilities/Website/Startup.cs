@@ -7,7 +7,6 @@ using Microsoft.AspNet.SignalR.Infrastructure;
 using Microsoft.Owin;
 using Ninject;
 using Owin;
-using Website.App_Start;
 using Website.Hubs;
 
 [assembly: OwinStartupAttribute(typeof(Website.Startup))]
