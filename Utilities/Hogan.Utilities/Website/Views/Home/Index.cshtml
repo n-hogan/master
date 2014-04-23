@@ -8,8 +8,6 @@
         var peopleHub = $.connection.peopleHub;
 
         function person2(id, name) {
-
-            debugger;
             var self = this;
             self.id = ko.observable(id);
             self.name = ko.observable(name);
@@ -56,7 +54,7 @@
 
             peopleHub.client.addPersonToPage = function (id, name) {
                 vm.people.push(new person2(id, name));
-                ko.applyBindings(vm);
+                
             };
 
             
@@ -65,7 +63,7 @@
                 peopleHub.server.push();
 
                 vm.people.push(new person2(3, "Matt"));
-                ko.applyBindings(vm);
+                
             });
         });
 
