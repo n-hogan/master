@@ -5,8 +5,13 @@
 
 @section JavaScript{
     <script>
+        function person2(id, name) {
 
-        var vm;
+            debugger;
+            var self = this;
+            self.id = ko.observable(id);
+            self.name = ko.observable(name);
+        }
 
         function person(pers) {
             var self = this;
@@ -19,24 +24,33 @@
             var self = this;
             self.people = ko.observableArray([]);
 
+
             var peopleHub = $.connection.peopleHub;
             $.connection.hub.start().done(function() {
-                peopleHub.server.getAll().done(function(data) {
+                peopleHub.server.getAll().done(function (data) {
+                    debugger;
 
-                    var peopleMapping = $.map(data, function(item) {
+                    self.people($.map(data, function(item) {
 
                         return new person(item);
-                    });
-                    self.people(peopleMapping);
+                    }));
+
+                    self.people.push(new person2(22, "barry"));
+
+
                 });
             });
-            
+
         };
 
         $(function() {
 
- 
-            vm = new peopleViewModel();
+            debugger;
+            var vm = new peopleViewModel();
+            debugger;
+            ko.applyBindings(vm);
+            debugger;
+            vm.people.push(new person2(3, "Matt"));
 
             ko.applyBindings(vm);
         });
