@@ -5,6 +5,8 @@
 
 @section JavaScript{
     <script>
+        var peopleHub = $.connection.peopleHub;
+
         function person2(id, name) {
 
             debugger;
@@ -25,7 +27,7 @@
             self.people = ko.observableArray([]);
 
 
-            var peopleHub = $.connection.peopleHub;
+            
             $.connection.hub.start().done(function() {
                 peopleHub.server.getAll().done(function (data) {
                     debugger;
@@ -45,14 +47,26 @@
 
         $(function() {
 
-            debugger;
+            
+
+
             var vm = new peopleViewModel();
-            debugger;
-            ko.applyBindings(vm);
-            debugger;
-            vm.people.push(new person2(3, "Matt"));
 
             ko.applyBindings(vm);
+
+            peopleHub.client.addPersonToPage = function (id, name) {
+                vm.people.push(new person2(id, name));
+                ko.applyBindings(vm);
+            };
+
+            
+            $("#clickme").click(function () {
+                debugger;
+                peopleHub.server.push();
+
+                vm.people.push(new person2(3, "Matt"));
+                ko.applyBindings(vm);
+            });
         });
 
 
@@ -71,6 +85,7 @@
         </tr>
     </tbody>
 </table>
+<input id="clickme" type="button"/>
 
 
 
