@@ -5,75 +5,59 @@
 
 @section JavaScript{
     <script>
-        $(function() {
-            //var chat = $.connection.chatHub;
 
-            //chat.client.broadcastMessage = function(name, message) {
-            //    // Html encode display name and message.
-            //    var encodedName = $('<div />').text(name).html();
-            //    var encodedMsg = $('<div />').text(message).html();
-            //    // Add the message to the page.
-            //    $('#discussion').append('<li><strong>' + encodedName
-            //        + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
-            //};
+        var vm;
 
-            //$('#displayname').val(prompt('Enter your name:', ''));
-            //// Set initial focus to message input box.
-            //$('#message').focus();
-            //// Start the connection.
-            //$.connection.hub.start().done(function() {
-            //    $('#sendmessage').click(function() {
-            //        // Call the Send method on the hub.
-            //        chat.server.send($('#displayname').val(), $('#message').val());
-            //        // Clear text box and reset focus for next comment.
-            //        $('#message').val('').focus();
-            //    });
-            //});
+        function person(pers) {
+            var self = this;
 
-            
-
-
-        var viewModel =
-        {
-            people: ko.observableArray()
+            self.id = ko.observable(pers.Id);
+            self.name = ko.observable(pers.Name);
         };
 
+        function peopleViewModel() {
+            var self = this;
+            self.people = ko.observableArray([]);
 
-        var people = $.connection.peopleHub;
-        $.connection.hub.start().done(function() {
-            people.server.getAll().done(function(data) {
-                debugger;
-                alert(data);
-                viewModel.people = ko.mapping.fromJS(data);
-                ko.applyBindings(viewModel);
+            var peopleHub = $.connection.peopleHub;
+            $.connection.hub.start().done(function() {
+                peopleHub.server.getAll().done(function(data) {
+
+                    var peopleMapping = $.map(data, function(item) {
+
+                        return new person(item);
+                    });
+                    self.people(peopleMapping);
+                });
             });
+            
+        };
 
+        $(function() {
+
+ 
+            vm = new peopleViewModel();
+
+            ko.applyBindings(vm);
         });
 
-
-    });
 
     </script>
    
 }
 
+<p>Test</p>
 
-
-
+<table>
     <tbody data-bind="foreach: people">
         <tr>
+            <td data-bind="text: id"></td>
             <td data-bind="text: name"></td>
- 
+
         </tr>
     </tbody>
+</table>
 
-
-<div class="container">
-    <input type="text" id="message" />
-    <input type="button" id="sendmessage" value="Send" />
-    <input type="hidden" id="displayname" />
-    <ul id="discussion"></ul>
-</div>
 
 
 

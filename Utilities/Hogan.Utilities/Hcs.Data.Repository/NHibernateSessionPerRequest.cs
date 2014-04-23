@@ -7,6 +7,7 @@ using FluentNHibernate.Conventions.Helpers;
 using FluentNHibernate.Data;
 using NHibernate;
 using NHibernate.Context;
+using NHibernate.Dialect;
 using NHibernate.Tool.hbm2ddl;
 
 namespace Hcs.Data.Repository

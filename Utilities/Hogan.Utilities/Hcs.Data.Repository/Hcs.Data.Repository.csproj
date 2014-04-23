@@ -53,6 +53,7 @@
     <Compile Include="NHibernateSessionPerRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository.cs" />
+    <Compile Include="SessionFactoryFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
