@@ -17,6 +17,10 @@ namespace Website.NinjectModules
             Bind<IRepository<Person>>().To<Repository<Person>>();
 
             Bind<ISession>().ToMethod(context => NHibernateSessionPerRequest.GetCurrentSession());
+            
+            
+            Bind<IHub>().To<PeopleHub>().WhenInjectedInto<PeopleController>();
+
 
             Bind<IHubConnectionContext>().ToMethod(context =>
                 GlobalHost.DependencyResolver.Resolve<IConnectionManager>().

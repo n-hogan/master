@@ -76,7 +76,7 @@ namespace Website
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<IHttpModule>().To<NHibernateSessionPerRequest>();
+            kernel.Bind<IHttpModule>().To<NHibernateSessionPerRequest>().InRequestScope();
             
             
 

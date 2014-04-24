@@ -20,7 +20,7 @@ namespace Website.Controllers
     public abstract class ODataControllerWithHub<THub> : ODataController where THub : IHub
     {
         private readonly Lazy<IHubContext> _hub =
-            new Lazy<IHubContext>(() => GlobalHost.ConnectionManager.GetHubContext<THub>());
+           new Lazy<IHubContext>(() => GlobalHost.ConnectionManager.GetHubContext<THub>());
 
         protected IHubContext Hub
         {

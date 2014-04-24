@@ -11,6 +11,8 @@ using System.Web.Http.OData.Query;
 using System.Web.Http.OData.Routing;
 using Hcs.Data.Entities;
 using Hcs.Data.Repository;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.Data.OData;
 using Website.Hubs;
 
@@ -29,11 +31,13 @@ namespace Website.Controllers
     {
         private static readonly ODataValidationSettings ValidationSettings = new ODataValidationSettings();
 
-        private readonly IRepository<Person> _repo; 
+        private readonly IRepository<Person> _repo;
+        
 
         public PeopleController(IRepository<Person> repo)
         {
             _repo = repo;
+
         }
 
         // GET: odata/People
@@ -48,6 +52,8 @@ namespace Website.Controllers
             {
                 return BadRequest(ex.Message);
             }
+
+            Hub.Clients.All.addPersonToPage(7, "Ahmed");
 
             return Ok(_repo.Get(x=>true));
             //return StatusCode(HttpStatusCode.NotImplemented);
