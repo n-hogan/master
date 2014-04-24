@@ -280,7 +280,6 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\PeopleController.cs" />
-    <Compile Include="Controllers\PeopleController2.cs" />
     <Compile Include="Hubs\DataHubBase.cs" />
     <Compile Include="Ninject\Modules\HoganNinjectModule.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />

@@ -18,15 +18,7 @@ using Website.Hubs;
 
 namespace Website.Controllers
 {
-    /*
-    The WebApiConfig class may require additional changes to add a route for this controller. Merge these statements into the Register method of the WebApiConfig class as applicable. Note that OData URLs are case sensitive.
-
-    using System.Web.Http.OData.Builder;
-    using Hcs.Data.Entities;
-    ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-    builder.EntitySet<Person>("People");
-    config.Routes.MapODataRoute("odata", "odata", builder.GetEdmModel());
-    */
+    
     public class PeopleController : ODataControllerWithHub<PeopleHub>
     {
         private static readonly ODataValidationSettings ValidationSettings = new ODataValidationSettings();
@@ -53,7 +45,7 @@ namespace Website.Controllers
                 return BadRequest(ex.Message);
             }
 
-            Hub.Clients.All.addPersonToPage(7, "Ahmed");
+            //Hub.Clients.All.addPersonToPage(7, "Ahmed");
 
             return Ok(_repo.Get(x=>true));
             //return StatusCode(HttpStatusCode.NotImplemented);
@@ -72,8 +64,8 @@ namespace Website.Controllers
                 return BadRequest(ex.Message);
             }
 
-            // return Ok<Person>(person);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            return Ok(_repo.Get(key));
+            //return StatusCode(HttpStatusCode.NotImplemented);
         }
 
         // PUT: odata/People(5)
@@ -89,10 +81,9 @@ namespace Website.Controllers
                 return BadRequest();
             }
 
-            // TODO: Add replace logic here.
-
-            // return Updated(person);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            _repo.CreateOrUpdate(person);
+            return Updated(person);
+            //return StatusCode(HttpStatusCode.NotImplemented);
         }
 
         // POST: odata/People
@@ -104,9 +95,12 @@ namespace Website.Controllers
             }
 
             // TODO: Add create logic here.
+            _repo.CreateOrUpdate(person);
 
-            // return Created(person);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            Hub.Clients.All.addPersonToPage(person.Id, person.Name);
+
+            return Created(person);
+            //return StatusCode(HttpStatusCode.NotImplemented);
         }
 
         // PATCH: odata/People(5)
@@ -120,21 +114,28 @@ namespace Website.Controllers
 
             // TODO: Get the entity here.
 
-            // delta.Patch(person);
+            var person =_repo.Get(key);
+
+            delta.Patch(person);
+
+            
 
             // TODO: Save the patched entity.
 
-            // return Updated(person);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            _repo.CreateOrUpdate(person);
+
+            return Updated(person);
+            //return StatusCode(HttpStatusCode.NotImplemented);
         }
 
         // DELETE: odata/People(5)
         public IHttpActionResult Delete([FromODataUri] long key)
         {
             // TODO: Add delete logic here.
+            _repo.Delete(key);
 
-            // return StatusCode(HttpStatusCode.NoContent);
-            return StatusCode(HttpStatusCode.NotImplemented);
+            return StatusCode(HttpStatusCode.NoContent);
+            //return StatusCode(HttpStatusCode.NotImplemented);
         }
     }
 }
