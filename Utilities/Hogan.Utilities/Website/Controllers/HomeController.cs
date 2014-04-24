@@ -1,13 +1,11 @@
 ﻿using System.Web.Mvc;
-using Hcs.Data.Entities;
-using Hcs.Data.Repository;
 
 
 namespace Website.Controllers
 {
     public class HomeController : Controller
     {
-        public HomeController(IRepository<Person> repo)
+        public HomeController()
         {
             //repo.CreateOrUpdate(new Person(){Name = "Nick"});
         }
