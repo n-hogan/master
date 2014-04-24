@@ -23,7 +23,7 @@ namespace Website.NinjectModules
                     GetHubContext<PeopleHub>().Clients
                 ).WhenInjectedInto<PeopleHub>();
 
-            Bind<PeopleController>().To<PeopleController>();
+            
         }
     }
 }
