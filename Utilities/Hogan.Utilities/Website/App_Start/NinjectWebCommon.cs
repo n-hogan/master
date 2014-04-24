@@ -1,19 +1,17 @@
 using System;
 using System.Web;
 using System.Web.Http;
-using Hcs.Data.Entities;
 using Hcs.Data.Repository;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
-using Microsoft.AspNet.SignalR.Infrastructure;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using Ninject;
+using Ninject.Web.WebApi;
 using Ninject.Web.Common;
+
 using Website;
-using Website.Hubs;
-using Website.Ninject.DependencyResolvers;
 using Website.NinjectModules;
-using NinjectDependencyResolver = Website.Ninject.DependencyResolvers.NinjectDependencyResolver;
+
+
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(NinjectWebCommon), "Stop")]
@@ -56,12 +54,13 @@ namespace Website
 
 
                 //signalr Ninject Resolver
-                GlobalHost.DependencyResolver = new SignalRNinjectDependencyResolver(kernel);
+                GlobalHost.DependencyResolver = new Website.Ninject.DependencyResolvers.SignalRNinjectDependencyResolver(kernel);
 
                 // WebApi Ninject Resolver
-                GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
+                System.Web.Http.GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
 
                 RegisterServices(kernel);
+
                 return kernel;
             }
             catch

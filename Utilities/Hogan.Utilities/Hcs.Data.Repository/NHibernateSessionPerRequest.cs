@@ -40,6 +40,8 @@ namespace Hcs.Data.Repository
             return SessionFactory.GetCurrentSession();
         }
 
+        
+
         // Opens the session, begins the transaction, and binds the session
         private static void BeginRequest(object sender, EventArgs e)
         {
