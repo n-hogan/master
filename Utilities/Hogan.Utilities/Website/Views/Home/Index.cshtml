@@ -28,7 +28,7 @@
             
             $.connection.hub.start().done(function() {
                 peopleHub.server.getAll().done(function (data) {
-                    debugger;
+                    
 
                     self.people($.map(data, function(item) {
 
@@ -59,7 +59,7 @@
 
             
             $("#clickme").click(function () {
-                debugger;
+                
                 peopleHub.server.push();
 
                 vm.people.push(new person2(3, "Matt"));
