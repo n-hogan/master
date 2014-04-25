@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hcs.Data.Entities
 {
-    public abstract class Entity
+    public abstract class Entity : IEntity
     {
         public virtual long Id { get; set; }
     }

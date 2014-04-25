@@ -10,7 +10,7 @@ namespace Website.Hubs
 {
     
 
-    public abstract class DataHubBase<T> : Hub where T: Entity
+    public abstract class DataHubBase<T> : Hub where T: IEntity
     {
         private readonly IRepository<T> _repo;
 

@@ -5,7 +5,7 @@ using Hcs.Data.Entities;
 
 namespace Hcs.Data.Repository
 {
-    public interface IRepository<TEntity> where TEntity : Entity
+    public interface IRepository<TEntity> where TEntity : IEntity
     {
         TEntity Get(long id);
         IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> func);
