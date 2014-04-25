@@ -9,6 +9,7 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script>
 
+        var peopleHub = $.connection.peopleHub;
         var vm = new ProductsViewModel();
 
         function ProductsViewModel() {
@@ -19,7 +20,7 @@
 
             self.create = function(formElement) {
                 
-                alert(formElement);
+                
                 // If valid, post the serialized form data to the web api
                 $(formElement).validate();
                 if ($(formElement).valid()) {
@@ -41,42 +42,47 @@
                     .done(function() { self.people.remove(person); });
             }
 
-            $.getJSON('/odata/People', function(data) {
-                
-                self.people(ko.utils.arrayMap(data.value, function(person) {
-
-                    return person;
-                }));
-            });
+            
 
             
         }
 
 
-        $(document).ready(function() {
+        $(document).ready(function () {
+            
+
             ko.applyBindings(vm);
 
-            peopleHub.client.addPersonToPage = function(person) {
-                debugger;
-                vm.people.push(person);
+            $.getJSON('/odata/People', function (data) {
 
+                vm.people(ko.utils.arrayMap(data.value, function (person) {
 
-            };
-
-            peopleHub.client.lockForEdit = function (person) {
-                debugger;
-                ko.utils.arrayFirst(vm.people, function (item) {
-                    debugger;
-                    if (person.id === item.id) {
-                        item.Locked = true;
-                    }
-                });
-            };
+                    return person;
+                })); 
+            });
         });
 
 
-        var peopleHub = $.connection.peopleHub;
-        $.connection.hub.start().done(function() {});
+        peopleHub.client.addPersonToPage = function (person) {
+
+            vm.people.push(person);
+
+        };
+
+        peopleHub.client.lockForEdit = function (person) {
+
+            var index = vm.people.indexOf(person);
+            if (index > -1) {
+                vm.people[index].locked = true;
+            }
+        };
+ 
+        $.connection.hub.start().done(function() {
+            
+            
+
+            
+        });
   
 
 
@@ -96,7 +102,7 @@
                 <div>
                     <div class="item">Name</div>
                     <input type="text" data-bind="value: $data.Name, enable: $data.Locked" />
-                    <input type="text" data-bind="event: { mouseover: function(data, event) { debugger; peopleHub.server.lock($data); }}, value: $data.Name, enable: !$data.Locked" />
+                    <input type="text" data-bind="event: { mouseover: function(data, event) { peopleHub.server.lock($data); }}, value: $data.Name, enable: !$data.Locked" />
                 </div>
                 <div>
                     <input type="button" value="Update" data-bind="click: $root.update" />
