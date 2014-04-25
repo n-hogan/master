@@ -14,10 +14,19 @@ namespace Website.Hubs
             
         }
 
+        public void Lock(Person person)
+        {
+            Clients.Others.lockForEdit(person);
+        }
+
+        public void Unlock(Person person)
+        {
+            Clients.All.unlock(person);
+        }
+
         public void Push()
         {
-            var context = GlobalHost.ConnectionManager.GetHubContext<PeopleHub>();
-            context.Clients.All.addPersonToPage(4, "Alex");
+            Clients.All.addPersonToPage(4, "Alex");
         }
 
 

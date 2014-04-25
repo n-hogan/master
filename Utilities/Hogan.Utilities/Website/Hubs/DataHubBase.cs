@@ -23,25 +23,5 @@ namespace Website.Hubs
         {
             return _repo.Get(x => true);
         }
-
-
-        public IEnumerable<T> FindPerson(long id)
-        {
-            return _repo.Get(x => x.Id == id);
-        }
-
-        public string Activate()
-        {
-            return "Monitor Activated";
-        }
-
-        public void PushMessage()
-        {
-            IConnectionManager connections =
-                GlobalHost.DependencyResolver.GetService(typeof (IConnectionManager)) as IConnectionManager;
-            connections.GetHubContext<DataHubBase<T>>().Clients.All.Activate();
-        }
-
-
     }
 }

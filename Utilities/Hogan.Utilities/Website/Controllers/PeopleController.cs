@@ -97,7 +97,7 @@ namespace Website.Controllers
             // TODO: Add create logic here.
             _repo.CreateOrUpdate(person);
 
-            Hub.Clients.All.addPersonToPage(person.Id, person.Name);
+            Hub.Clients.All.addPersonToPage(person);
 
             return Created(person);
             //return StatusCode(HttpStatusCode.NotImplemented);

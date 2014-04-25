@@ -2,70 +2,82 @@
     ViewBag.Title = "Index";
 }
 
+@model Website.Models.PersonViewModel
+
 
 @section JavaScript{
+    @Scripts.Render("~/bundles/jqueryval")
     <script>
-        var peopleHub = $.connection.peopleHub;
 
-        function person2(id, name) {
+        var vm = new ProductsViewModel();
+
+        function ProductsViewModel() {
             var self = this;
-            self.id = ko.observable(id);
-            self.name = ko.observable(name);
+            self.people = ko.observableArray();
+
+            var baseUri = '/odata/People';
+
+            self.create = function(formElement) {
+                
+                alert(formElement);
+                // If valid, post the serialized form data to the web api
+                $(formElement).validate();
+                if ($(formElement).valid()) {
+                    $.post(baseUri, $(formElement).serialize(), null, "json");
+                }
+
+            }
+
+
+            self.update = function(person) {
+                
+                $.ajax({ type: "PUT", url: baseUri + '/(' + person.Id + ')', data: person });
+            }
+
+            self.remove = function(person) {
+                
+                // First remove from the server, then from the UI
+                $.ajax({ type: "DELETE", url: baseUri + '/(' + person.Id + ')' })
+                    .done(function() { self.people.remove(person); });
+            }
+
+            $.getJSON('/odata/People', function(data) {
+                
+                self.people(ko.utils.arrayMap(data.value, function(person) {
+
+                    return person;
+                }));
+            });
+
+            
         }
 
-        function person(pers) {
-            var self = this;
 
-            self.id = ko.observable(pers.Id);
-            self.name = ko.observable(pers.Name);
-        };
-
-        function peopleViewModel() {
-            var self = this;
-            self.people = ko.observableArray([]);
-
-
-            
-            $.connection.hub.start().done(function() {
-                peopleHub.server.getAll().done(function (data) {
-                    
-
-                    self.people($.map(data, function(item) {
-
-                        return new person(item);
-                    }));
-
-                    self.people.push(new person2(22, "barry"));
-
-
-                });
-            });
-
-        };
-
-        $(function() {
-
-            
-
-
-            var vm = new peopleViewModel();
-
+        $(document).ready(function() {
             ko.applyBindings(vm);
 
-            peopleHub.client.addPersonToPage = function (id, name) {
-                vm.people.push(new person2(id, name));
-                
+            peopleHub.client.addPersonToPage = function(person) {
+                debugger;
+                vm.people.push(person);
+
+
             };
 
-            
-            $("#clickme").click(function () {
-                
-                peopleHub.server.push();
-
-                vm.people.push(new person2(3, "Matt"));
-                
-            });
+            peopleHub.client.lockForEdit = function (person) {
+                debugger;
+                ko.utils.arrayFirst(vm.people, function (item) {
+                    debugger;
+                    if (person.id === item.id) {
+                        item.Locked = true;
+                    }
+                });
+            };
         });
+
+
+        var peopleHub = $.connection.peopleHub;
+        $.connection.hub.start().done(function() {});
+  
 
 
     </script>
@@ -74,17 +86,41 @@
 
 <p>Test</p>
 
-<table>
-    <tbody data-bind="foreach: people">
-        <tr>
-            <td data-bind="text: id"></td>
-            <td data-bind="text: name"></td>
+<div class="content">
+    <div class="float-left">
+        <ul id="update-people" data-bind="foreach: people">
+            <li>
+                <div>
+                    <div class="item">Person ID</div> <span data-bind="text: $data.Id"></span>
+                </div>
+                <div>
+                    <div class="item">Name</div>
+                    <input type="text" data-bind="value: $data.Name, enable: $data.Locked" />
+                    <input type="text" data-bind="event: { mouseover: function(data, event) { debugger; peopleHub.server.lock($data); }}, value: $data.Name, enable: !$data.Locked" />
+                </div>
+                <div>
+                    <input type="button" value="Update" data-bind="click: $root.update" />
+                    <input type="button" value="Delete Item" data-bind="click: $root.remove" />
+                </div>
+            </li>
+        </ul>
+    </div>
 
-        </tr>
-    </tbody>
-</table>
-<input id="clickme" type="button"/>
-
+    <div class="float-right">
+        <h2>Add New Person</h2>
+        <form id="addPerson" data-bind="submit: create">
+            @Html.ValidationSummary(true)
+            <fieldset>
+                <legend>Contact</legend>
+                @Html.EditorFor(x=>x.Name)
+                
+                <p>
+                    <input type="submit" value="Save" />
+                </p>
+            </fieldset>
+        </form>
+    </div>
+</div>
 
 
 
