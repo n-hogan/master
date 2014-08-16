@@ -12,6 +12,15 @@
         var peopleHub = $.connection.peopleHub;
         var vm = new ProductsViewModel();
 
+        function arrayFirstIndexOf(array, predicate, predicateOwner) {
+            for (var i = 0, j = array.length; i < j; i++) {
+                if (predicate.call(predicateOwner, array[i])) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         function ProductsViewModel() {
             var self = this;
             self.people = ko.observableArray();
@@ -71,9 +80,10 @@
 
         peopleHub.client.lockForEdit = function (person) {
 
-            var index = vm.people.indexOf(person);
+
+            var index = arrayFirstIndexOf(vm.people(), function(item) { return item.id == person.id; });
             if (index > -1) {
-                vm.people[index].locked = true;
+                vm.people()[index].locked = true;
             }
         };
  
