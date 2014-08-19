@@ -22,7 +22,7 @@ namespace Website.NinjectModules
             Bind<IHub>().To<PeopleHub>().WhenInjectedInto<PeopleController>();
 
 
-            Bind<IHubConnectionContext>().ToMethod(context =>
+            Bind<IHubConnectionContext<dynamic>>().ToMethod(context =>
                 GlobalHost.DependencyResolver.Resolve<IConnectionManager>().
                     GetHubContext<PeopleHub>().Clients
                 ).WhenInjectedInto<PeopleHub>();
